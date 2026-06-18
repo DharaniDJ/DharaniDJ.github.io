@@ -62,8 +62,8 @@ export default function Contact() {
           <h2 className="section-heading">Get In Touch</h2>
           <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 mx-auto mt-4 rounded-full" />
           <p className="text-gray-400 mt-6 text-base max-w-xl mx-auto">
-            I'm currently open to new opportunities. Whether you have a role in mind, a project to discuss,
-            or just want to say hi — my inbox is always open!
+            I'm currently open to new opportunities anywhere in the United States. Whether you have a role in mind,
+            a project to discuss, or just want to say hi — my inbox is always open!
           </p>
         </motion.div>
 

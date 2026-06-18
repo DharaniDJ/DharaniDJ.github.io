@@ -40,7 +40,7 @@ export default function Experience() {
                   <div className="w-2 h-2 rounded-full bg-blue-500" />
                 </div>
 
-                <div className="card group">
+                <motion.div whileHover={{ y: -4 }} className="card group">
                   <div className="flex flex-wrap items-start justify-between gap-4 mb-5">
                     <div className="flex items-center gap-4">
                       {/* Company logo placeholder */}
@@ -74,7 +74,7 @@ export default function Experience() {
                       </li>
                     ))}
                   </ul>
-                </div>
+                </motion.div>
               </motion.div>
             ))}
           </div>

@@ -28,6 +28,7 @@ export default function Skills() {
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: i * 0.08 }}
+              whileHover={{ y: -4 }}
               className="card group h-full"
             >
               <div className="flex items-center gap-3 mb-4">

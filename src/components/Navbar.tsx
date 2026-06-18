@@ -13,11 +13,33 @@ const NAV_LINKS = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeId, setActiveId] = useState('hero');
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Scroll-spy: highlight the nav link for the section currently in view.
+  useEffect(() => {
+    const ids = ['hero', ...NAV_LINKS.map((l) => l.href.slice(1))];
+    const sections = ids
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActiveId(entry.target.id);
+        });
+      },
+      { rootMargin: '-45% 0px -50% 0px', threshold: 0 }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
   }, []);
 
   const handleNavClick = (href: string) => {
@@ -36,25 +58,34 @@ export default function Navbar() {
         <a
           href="#hero"
           onClick={(e) => { e.preventDefault(); handleNavClick('#hero'); }}
-          className="text-white font-bold text-lg tracking-tight hover:text-blue-400 transition-colors"
+          className="font-bold text-lg tracking-tight transition-opacity hover:opacity-80"
         >
-          <span className="gradient-text">DC</span>
-          <span className="text-gray-400 font-mono text-sm ml-1">.dev</span>
+          <span className="gradient-text">Dharani</span>
+          <span className="text-white ml-1.5">Chinta</span>
         </a>
 
         {/* Desktop nav */}
         <ul className="hidden md:flex items-center gap-8">
-          {NAV_LINKS.map((link) => (
-            <li key={link.href}>
-              <a
-                href={link.href}
-                className="nav-link"
-                onClick={(e) => { e.preventDefault(); handleNavClick(link.href); }}
-              >
-                {link.label}
-              </a>
-            </li>
-          ))}
+          {NAV_LINKS.map((link) => {
+            const isActive = activeId === link.href.slice(1);
+            return (
+              <li key={link.href}>
+                <a
+                  href={link.href}
+                  aria-current={isActive ? 'page' : undefined}
+                  className={`nav-link relative ${isActive ? 'text-white' : ''}`}
+                  onClick={(e) => { e.preventDefault(); handleNavClick(link.href); }}
+                >
+                  {link.label}
+                  <span
+                    className={`absolute -bottom-1.5 left-0 h-0.5 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-300 ${
+                      isActive ? 'w-full' : 'w-0'
+                    }`}
+                  />
+                </a>
+              </li>
+            );
+          })}
         </ul>
 
         <a
@@ -79,17 +110,21 @@ export default function Navbar() {
       {menuOpen && (
         <div className="md:hidden bg-gray-950/98 backdrop-blur-md border-t border-gray-800/50">
           <ul className="flex flex-col px-6 py-4 gap-4">
-            {NAV_LINKS.map((link) => (
-              <li key={link.href}>
-                <a
-                  href={link.href}
-                  className="nav-link text-base"
-                  onClick={(e) => { e.preventDefault(); handleNavClick(link.href); }}
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))}
+            {NAV_LINKS.map((link) => {
+              const isActive = activeId === link.href.slice(1);
+              return (
+                <li key={link.href}>
+                  <a
+                    href={link.href}
+                    aria-current={isActive ? 'page' : undefined}
+                    className={`nav-link text-base ${isActive ? 'text-blue-400' : ''}`}
+                    onClick={(e) => { e.preventDefault(); handleNavClick(link.href); }}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              );
+            })}
             <li>
               <a href="mailto:dharani56525@gmail.com" className="btn-primary text-sm w-full justify-center">
                 Hire Me

@@ -36,6 +36,7 @@ export default function Education() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={isInView ? { opacity: 1, x: 0 } : {}}
                   transition={{ duration: 0.5, delay: i * 0.15 }}
+                  whileHover={{ y: -4 }}
                   className="card group"
                 >
                   <div className="flex items-start gap-4">
@@ -76,6 +77,7 @@ export default function Education() {
                   initial={{ opacity: 0, x: 20 }}
                   animate={isInView ? { opacity: 1, x: 0 } : {}}
                   transition={{ duration: 0.5, delay: i * 0.12 }}
+                  whileHover={{ y: -4 }}
                   className="card group flex items-center gap-4"
                 >
                   <span className="text-2xl flex-shrink-0">{cert.icon}</span>

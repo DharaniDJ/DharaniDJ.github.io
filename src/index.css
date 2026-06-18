@@ -14,6 +14,33 @@
   * {
     box-sizing: border-box;
   }
+
+  /* Offset anchored sections so they aren't hidden under the fixed navbar */
+  section[id] {
+    scroll-margin-top: 5rem;
+  }
+
+  /* Clear, keyboard-accessible focus ring */
+  *:focus-visible {
+    outline: 2px solid #60a5fa;
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 @layer components {

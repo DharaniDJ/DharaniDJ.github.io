@@ -41,7 +41,7 @@ export default function Hero() {
           className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-medium mb-8"
         >
           <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-          Open to opportunities
+          Open to opportunities across the U.S.
         </motion.div>
 
         {/* Name */}
@@ -75,6 +75,17 @@ export default function Hero() {
           {personalInfo.tagline}
         </motion.p>
 
+        {/* Bio */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.35 }}
+          className="text-gray-500 text-sm md:text-base max-w-2xl mx-auto mb-4 leading-relaxed"
+        >
+          A Software Development Engineer building production GenAI systems. I turn complex, ambiguous
+          problems into clean, scalable products.
+        </motion.p>
+
         {/* Company badge */}
         <motion.p
           initial={{ opacity: 0 }}
@@ -92,21 +103,30 @@ export default function Hero() {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="flex flex-wrap gap-4 justify-center mb-12"
         >
-          <a
-            href="#experience"
+          <motion.a
+            href="#projects"
             className="btn-primary"
+            whileHover={{ y: -2 }}
+            whileTap={{ scale: 0.97 }}
             onClick={(e) => {
               e.preventDefault();
-              document.querySelector('#experience')?.scrollIntoView({ behavior: 'smooth' });
+              document.querySelector('#projects')?.scrollIntoView({ behavior: 'smooth' });
             }}
           >
             View My Work
-          </a>
-          <a href={personalInfo.github} target="_blank" rel="noopener noreferrer" className="btn-outline">
+          </motion.a>
+          <motion.a
+            href={personalInfo.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-outline"
+            whileHover={{ y: -2 }}
+            whileTap={{ scale: 0.97 }}
+          >
             <FaGithub size={18} />
             GitHub Profile
             <ExternalLink size={14} className="text-gray-500" />
-          </a>
+          </motion.a>
         </motion.div>
 
         {/* Social Links */}

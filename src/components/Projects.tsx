@@ -21,7 +21,7 @@ export default function Projects() {
           <p className="text-blue-400 font-mono text-sm font-medium mb-2 tracking-widest uppercase">What I've built</p>
           <h2 className="section-heading">Featured Projects</h2>
           <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 mx-auto mt-4 rounded-full" />
-          <p className="text-gray-500 mt-4 text-sm">Key projects from my professional experience</p>
+          <p className="text-gray-500 mt-4 text-sm">Key projects I've designed and shipped</p>
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -31,6 +31,7 @@ export default function Projects() {
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: i * 0.1 }}
+              whileHover={{ y: -6 }}
               className="card flex flex-col group h-full"
             >
               {/* Header */}
@@ -90,6 +91,20 @@ export default function Projects() {
                   </span>
                 ))}
               </div>
+
+              {/* View code link */}
+              {project.github && (
+                <a
+                  href={project.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors group/link"
+                >
+                  <FaGithub size={15} />
+                  View Code
+                  <ExternalLink size={12} className="opacity-0 -translate-x-1 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all" />
+                </a>
+              )}
             </motion.div>
           ))}
         </div>
