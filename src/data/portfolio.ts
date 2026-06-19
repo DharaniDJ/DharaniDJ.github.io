@@ -11,7 +11,7 @@ export const personalInfo = {
   linkedin: 'https://linkedin.com/in/dharani-chinta/',
   leetcode: 'https://leetcode.com/u/dharani56525/',
   summary:
-    'Full-stack software engineer with 4+ years of experience building AI-powered systems, event-driven microservices, and real-time streaming infrastructure. I have led development of an enterprise GenAI assistant serving 2000+ users — spanning LLM integration, retrieval-augmented generation (RAG) pipelines, automated quality evaluation, and real-time response streaming for long-running agentic tools.',
+    'Full-stack software engineer with 4+ years of experience building AI-powered systems, event-driven microservices, and real-time streaming infrastructure. I have led development of an enterprise GenAI assistant serving 500+ users — spanning LLM integration, retrieval-augmented generation (RAG) pipelines, automated quality evaluation, and real-time response streaming for long-running agentic tools.',
 };
 
 export const experiences: Experience[] = [
@@ -23,7 +23,7 @@ export const experiences: Experience[] = [
     color: 'from-orange-500 to-orange-600',
     initials: 'AMZ',
     highlights: [
-      'Engineered real-time streaming infrastructure for an enterprise GenAI assistant (2000+ users), eliminating 15–30s of frozen UI during long-running agentic tool executions through response streaming — without modifying existing serverless backend code.',
+      'Engineered real-time streaming infrastructure for an enterprise GenAI assistant (500+ users), eliminating 15–30s of frozen UI during long-running agentic tool executions through response streaming — without modifying existing serverless backend code.',
       'Built an automated LLM evaluation pipeline using a critic-model framework, enforcing an answer-correctness threshold across 30+ benchmark queries as a mandatory quality gate before every production release.',
       'Architected an event-driven document ingestion pipeline (S3 → SQS → Lambda → Step Functions → vector knowledge base) enabling cross-organizational teams to contribute domain-specific content with zero platform-team intervention.',
       'Delivered a self-service knowledge base portal with async pre-signed S3 uploads, real-time ingestion-status polling, and role-based access control — removing engineering dependency for internal content contributions.',
@@ -180,9 +180,9 @@ export const projects: Project[] = [
   {
     title: 'Enterprise GenAI Assistant – Real-Time Streaming',
     description:
-      'Real-time streaming infrastructure for an enterprise GenAI assistant serving 2000+ users. Eliminated 15–30s of frozen UI by implementing response streaming for long-running agentic tools — without modifying existing serverless backend code.',
+      'Real-time streaming infrastructure for an enterprise GenAI assistant serving 500+ users. Eliminated 15–30s of frozen UI by implementing response streaming for long-running agentic tools — without modifying existing serverless backend code.',
     tech: ['LLM Integration', 'AWS Lambda', 'Streaming Gateway', 'Python', 'SSE', 'RAG'],
-    highlights: ['2000+ active users', 'Eliminated frozen UI', 'Zero backend changes'],
+    highlights: ['500+ active users', 'Eliminated frozen UI', 'Zero backend changes'],
   },
   {
     title: 'Self-Service Knowledge Base Portal',

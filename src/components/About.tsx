@@ -6,7 +6,7 @@ import { personalInfo } from '../data/portfolio';
 
 const stats = [
   { value: '4+', label: 'Years Experience', icon: Briefcase },
-  { value: '2000+', label: 'Users Served', icon: Zap },
+  { value: '500+', label: 'Users Served', icon: Zap },
   { value: '4.0', label: 'MS GPA at ASU', icon: GraduationCap },
   { value: '63%', label: 'Cloud Cost Reduction', icon: TrendingDown },
 ];
