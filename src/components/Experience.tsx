@@ -1,85 +1,126 @@
+import { useRef, useState, type KeyboardEvent } from 'react';
 import { motion } from 'framer-motion';
-import { useInView } from 'framer-motion';
-import { useRef } from 'react';
-import { MapPin, Calendar, CheckCircle } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import { experiences } from '../data/portfolio';
+import Emphasis from './ui/Emphasis';
+import Reveal from './ui/Reveal';
+import Section from './ui/Section';
+
+const tabId = (id: string) => `exp-tab-${id}`;
+const panelId = (id: string) => `exp-panel-${id}`;
 
 export default function Experience() {
-  const ref = useRef<HTMLElement>(null);
-  const isInView = useInView(ref, { once: true, margin: '-100px' });
+  const [active, setActive] = useState(0);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  const select = (index: number) => {
+    const next = (index + experiences.length) % experiences.length;
+    setActive(next);
+    tabRefs.current[next]?.focus();
+  };
+
+  const onKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
+    const keyMap: Record<string, () => void> = {
+      ArrowDown: () => select(active + 1),
+      ArrowRight: () => select(active + 1),
+      ArrowUp: () => select(active - 1),
+      ArrowLeft: () => select(active - 1),
+      Home: () => select(0),
+      End: () => select(experiences.length - 1),
+    };
+    const action = keyMap[e.key];
+    if (action) {
+      e.preventDefault();
+      action();
+    }
+  };
 
   return (
-    <section id="experience" ref={ref} className="py-24 bg-gray-900/30">
-      <div className="max-w-6xl mx-auto px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+    <Section id="experience" eyebrow="Experience" title="Six roles, one habit: measure the result." band>
+      <Reveal className="grid gap-8 lg:grid-cols-[15rem_1fr] lg:gap-12">
+        <div
+          role="tablist"
+          aria-label="Employers"
+          className="-mx-5 flex gap-2 overflow-x-auto px-5 pb-1 [scrollbar-width:none] sm:-mx-8 sm:px-8 lg:mx-0 lg:flex-col lg:gap-1 lg:overflow-visible lg:px-0 lg:pb-0"
         >
-          <p className="text-blue-400 font-mono text-sm font-medium mb-2 tracking-widest uppercase">Career journey</p>
-          <h2 className="section-heading">Work Experience</h2>
-          <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 mx-auto mt-4 rounded-full" />
-        </motion.div>
-
-        <div className="relative">
-          {/* Vertical timeline line */}
-          <div className="absolute left-8 top-0 bottom-0 w-px bg-gradient-to-b from-blue-500/50 via-gray-700/50 to-transparent hidden md:block" />
-
-          <div className="space-y-10">
-            {experiences.map((exp, i) => (
-              <motion.div
-                key={`${exp.company}-${i}`}
-                initial={{ opacity: 0, x: -30 }}
-                animate={isInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.6, delay: i * 0.15 }}
-                className="relative md:pl-20"
+          {experiences.map((exp, i) => {
+            const selected = i === active;
+            return (
+              <button
+                key={exp.id}
+                ref={(el) => {
+                  tabRefs.current[i] = el;
+                }}
+                id={tabId(exp.id)}
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                aria-controls={panelId(exp.id)}
+                tabIndex={selected ? 0 : -1}
+                onClick={() => setActive(i)}
+                onKeyDown={onKeyDown}
+                className={`relative flex-none rounded-xl border px-4 py-2.5 text-left transition-colors lg:py-3 ${
+                  selected
+                    ? 'border-ember/60 bg-ink-850 text-fg lg:border-line-strong'
+                    : 'border-line bg-transparent text-muted hover:border-line-strong hover:text-fg lg:border-transparent'
+                }`}
               >
-                {/* Timeline dot */}
-                <div className="absolute left-5 top-6 w-6 h-6 rounded-full border-2 border-blue-500 bg-gray-950 hidden md:flex items-center justify-center">
-                  <div className="w-2 h-2 rounded-full bg-blue-500" />
-                </div>
-
-                <motion.div whileHover={{ y: -4 }} className="card group">
-                  <div className="flex flex-wrap items-start justify-between gap-4 mb-5">
-                    <div className="flex items-center gap-4">
-                      {/* Company logo placeholder */}
-                      <div
-                        className={`w-12 h-12 rounded-xl bg-gradient-to-br ${exp.color} flex items-center justify-center text-white text-xs font-bold flex-shrink-0`}
-                      >
-                        {exp.initials}
-                      </div>
-                      <div>
-                        <h3 className="text-white font-semibold text-lg leading-tight">{exp.role}</h3>
-                        <p className="text-blue-400 font-medium">{exp.company}</p>
-                      </div>
-                    </div>
-                    <div className="text-right text-sm text-gray-500 space-y-1">
-                      <div className="flex items-center gap-1.5 justify-end">
-                        <Calendar size={13} />
-                        <span>{exp.period}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 justify-end">
-                        <MapPin size={13} />
-                        <span>{exp.location}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <ul className="space-y-2.5">
-                    {exp.highlights.map((point) => (
-                      <li key={point} className="flex gap-3 text-gray-400 text-sm leading-relaxed">
-                        <CheckCircle size={15} className="text-blue-500 flex-shrink-0 mt-0.5" />
-                        <span>{point}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </motion.div>
-              </motion.div>
-            ))}
-          </div>
+                {selected && (
+                  <motion.span
+                    layoutId="exp-active"
+                    aria-hidden="true"
+                    className="absolute inset-y-2 left-0 hidden w-0.5 rounded-full bg-accent lg:block"
+                    transition={{ type: 'spring', stiffness: 400, damping: 34 }}
+                  />
+                )}
+                {selected && (
+                  <span
+                    aria-hidden="true"
+                    className="absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-accent lg:hidden"
+                  />
+                )}
+                <span className="block font-display text-base font-semibold">{exp.shortName}</span>
+                <span className="hidden font-mono text-xs text-muted lg:block">{exp.period}</span>
+              </button>
+            );
+          })}
         </div>
-      </div>
-    </section>
+
+        {experiences.map((exp, i) => (
+          <div
+            key={exp.id}
+            id={panelId(exp.id)}
+            role="tabpanel"
+            aria-labelledby={tabId(exp.id)}
+            tabIndex={0}
+            hidden={i !== active}
+            className="min-w-0 max-w-[38rem] rounded-2xl"
+          >
+            <div className="border-b border-line pb-5">
+              <h3 className="text-2xl font-semibold tracking-tight sm:text-3xl">{exp.role}</h3>
+              <p className="mt-1 text-lg font-medium text-ember">{exp.company}</p>
+              <p className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-sm text-muted">
+                <span>{exp.period}</span>
+                <span className="inline-flex items-center gap-1.5">
+                  <MapPin size={13} aria-hidden="true" />
+                  {exp.location}
+                </span>
+              </p>
+            </div>
+            <ul className="mt-6 space-y-4">
+              {exp.highlights.map((point) => (
+                <li key={point.text} className="flex gap-4 text-base leading-relaxed text-body">
+                  <span aria-hidden="true" className="mt-[0.6rem] h-1.5 w-1.5 flex-none rotate-45 bg-accent" />
+                  <span>
+                    {point.lead && <span className="font-display font-semibold text-fg">{point.lead}. </span>}
+                    <Emphasis text={point.text} />
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </Reveal>
+    </Section>
   );
 }

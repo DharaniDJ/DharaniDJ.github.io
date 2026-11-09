@@ -1,22 +1,15 @@
-import { motion, useScroll, useSpring } from 'framer-motion';
+import { motion, useReducedMotion, useScroll, useSpring } from 'framer-motion';
 
-/**
- * A thin gradient bar fixed to the top of the viewport that fills
- * from left to right as the user scrolls — a standard reading-progress affordance.
- */
 export default function ScrollProgress() {
   const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 120,
-    damping: 30,
-    mass: 0.3,
-  });
+  const reduceMotion = useReducedMotion();
+  const smoothed = useSpring(scrollYProgress, { stiffness: 140, damping: 30, mass: 0.3 });
 
   return (
     <motion.div
-      style={{ scaleX }}
-      className="fixed top-0 left-0 right-0 h-0.5 origin-left z-[60] bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"
       aria-hidden="true"
+      style={{ scaleX: reduceMotion ? scrollYProgress : smoothed }}
+      className="fixed inset-x-0 top-0 z-[60] h-0.5 origin-left bg-accent"
     />
   );
 }

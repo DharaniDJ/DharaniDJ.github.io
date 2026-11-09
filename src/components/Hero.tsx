@@ -1,164 +1,123 @@
-import { motion } from 'framer-motion';
-import { FaGithub, FaLinkedin } from 'react-icons/fa';
-import { SiLeetcode } from 'react-icons/si';
-import { Mail, ExternalLink, ChevronDown } from 'lucide-react';
-import { personalInfo } from '../data/portfolio';
+import { ArrowRight } from 'lucide-react';
+import { FaGithub } from 'react-icons/fa';
+import { headlineMetrics, personalInfo } from '../data/portfolio';
+import type { HeadlineMetric } from '../types';
+import CountUp from './ui/CountUp';
+import Metric from './ui/Metric';
+import Reveal from './ui/Reveal';
 
-const socialLinks = [
-  { icon: FaGithub, href: personalInfo.github, label: 'GitHub' },
-  { icon: FaLinkedin, href: personalInfo.linkedin, label: 'LinkedIn' },
-  { icon: SiLeetcode, href: personalInfo.leetcode, label: 'LeetCode' },
-  { icon: Mail, href: `mailto:${personalInfo.email}`, label: 'Email' },
-];
+const formatMetric = (m: HeadlineMetric) => `${m.prefix ?? ''}${m.value.toFixed(m.decimals ?? 0)}${m.suffix ?? ''}`;
 
 export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      aria-labelledby="hero-title"
+      className="relative flex items-center overflow-hidden pb-16 pt-[calc(var(--nav-height)+1.25rem)] sm:pt-[calc(var(--nav-height)+2.5rem)] md:min-h-[min(100svh,60rem)] md:pb-24"
     >
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(59,130,246,0.12),transparent_60%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(99,102,241,0.08),transparent_60%)]" />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+        <div className="absolute inset-0 bg-[linear-gradient(rgb(var(--line)/0.55)_1px,transparent_1px),linear-gradient(90deg,rgb(var(--line)/0.55)_1px,transparent_1px)] bg-[size:72px_72px] [mask-image:radial-gradient(ellipse_70%_60%_at_70%_35%,black,transparent)]" />
+        <div className="absolute -right-40 -top-40 h-[34rem] w-[34rem] rounded-full bg-rose/20 blur-[140px]" />
+        <div className="absolute -left-20 bottom-0 h-[24rem] w-[24rem] rounded-full bg-ember/10 blur-[120px]" />
+        <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-b from-transparent to-ink-950" />
+      </div>
 
-      {/* Grid pattern overlay */}
-      <div
-        className="absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-          backgroundSize: '60px 60px',
-        }}
-      />
+      <div className="relative mx-auto grid w-full max-w-content gap-12 px-5 sm:px-8 lg:grid-cols-[1.2fr_1fr] lg:items-center lg:gap-16">
+        <div>
+          <Reveal>
+            <p className="inline-flex items-center gap-2 rounded-full border border-mint/30 bg-mint/10 px-3 py-1 text-xs font-medium text-mint sm:px-3.5 sm:py-1.5 sm:text-sm">
+              <span aria-hidden="true" className="h-2 w-2 rounded-full bg-mint motion-safe:animate-pulse" />
+              {personalInfo.status}
+            </p>
+          </Reveal>
 
-      <div className="relative max-w-6xl mx-auto px-6 py-32 text-center">
-        {/* Status badge */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-medium mb-8"
-        >
-          <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-          Open to opportunities across the U.S.
-        </motion.div>
-
-        {/* Name */}
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-4xl md:text-7xl font-bold text-white mb-4 leading-tight tracking-tight"
-        >
-          Dharani{' '}
-          <span className="gradient-text">Chinta</span>
-        </motion.h1>
-
-        {/* Title */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-xl md:text-2xl text-blue-400 font-semibold mb-6 font-mono"
-        >
-          {personalInfo.title}
-        </motion.p>
-
-        {/* Tagline */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="text-gray-400 text-base md:text-lg max-w-2xl mx-auto mb-4"
-        >
-          {personalInfo.tagline}
-        </motion.p>
-
-        {/* Bio */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.35 }}
-          className="text-gray-500 text-sm md:text-base max-w-2xl mx-auto mb-4 leading-relaxed"
-        >
-          A Software Development Engineer building production GenAI systems. I turn complex, ambiguous
-          problems into clean, scalable products.
-        </motion.p>
-
-        {/* Company badge */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.35 }}
-          className="text-gray-500 text-sm mb-10"
-        >
-          Currently @ <span className="text-orange-400 font-semibold">Amazon.com</span> · Bellevue, WA
-        </motion.p>
-
-        {/* CTA Buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="flex flex-wrap gap-4 justify-center mb-12"
-        >
-          <motion.a
-            href="#projects"
-            className="btn-primary"
-            whileHover={{ y: -2 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={(e) => {
-              e.preventDefault();
-              document.querySelector('#projects')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-          >
-            View My Work
-          </motion.a>
-          <motion.a
-            href={personalInfo.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-outline"
-            whileHover={{ y: -2 }}
-            whileTap={{ scale: 0.97 }}
-          >
-            <FaGithub size={18} />
-            GitHub Profile
-            <ExternalLink size={14} className="text-gray-500" />
-          </motion.a>
-        </motion.div>
-
-        {/* Social Links */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="flex justify-center gap-4"
-        >
-          {socialLinks.map(({ icon: Icon, href, label }) => (
-            <a
-              key={label}
-              href={href}
-              target={href.startsWith('mailto') ? undefined : '_blank'}
-              rel="noopener noreferrer"
-              aria-label={label}
-              className="p-3 rounded-xl bg-gray-800/50 border border-gray-700/50 text-gray-400 hover:text-white hover:border-blue-500/50 hover:bg-gray-800 transition-all duration-200"
+          <Reveal delay={0.05}>
+            <p className="mt-5 flex flex-wrap gap-x-2 font-mono text-xs leading-relaxed text-muted sm:mt-8 sm:text-sm">
+              <span className="whitespace-nowrap">
+                {personalInfo.title}
+                <span aria-hidden="true"> ·</span>
+              </span>
+              <span className="whitespace-nowrap">
+                {personalInfo.currentRoleShort} <span className="text-ember">@ {personalInfo.currentCompany}</span>
+                <span aria-hidden="true"> ·</span>
+              </span>
+              <span className="whitespace-nowrap">{personalInfo.location}</span>
+            </p>
+            <h1
+              id="hero-title"
+              tabIndex={-1}
+              className="mt-3 text-[clamp(3.25rem,10vw,7.5rem)] font-bold leading-[0.88] tracking-[-0.045em] outline-none"
             >
-              <Icon size={20} />
-            </a>
-          ))}
-        </motion.div>
+              <span className="block">{personalInfo.firstName}</span>
+              <span className="block pb-2 text-accent">{personalInfo.lastName}</span>
+            </h1>
+            <p className="mt-3 text-balance font-display text-xl font-medium leading-snug text-fg sm:mt-5 sm:text-2xl">
+              {personalInfo.valueLine}
+            </p>
+          </Reveal>
 
-        {/* Scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 text-gray-600 animate-bounce"
-        >
-          <ChevronDown size={24} />
-        </motion.div>
+          <Reveal delay={0.08} className="lg:hidden">
+            <dl className="mt-5 grid grid-cols-2 gap-x-4 gap-y-3 border-y border-line py-4">
+              {headlineMetrics.map((m) => (
+                <div key={m.label} className="flex flex-col">
+                  <dt className="order-2 mt-0.5 text-[0.7rem] leading-tight text-muted">{m.shortLabel}</dt>
+                  <dd className="order-1 whitespace-nowrap font-mono text-xl font-semibold leading-tight text-accent">
+                    {formatMetric(m)}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </Reveal>
+
+          <Reveal delay={0.1}>
+            <p className="mt-5 max-w-xl text-base leading-relaxed text-body sm:text-lg">{personalInfo.tagline}</p>
+            <div className="mt-6 flex flex-wrap gap-2.5 sm:mt-9 sm:gap-3">
+              <a href="#projects" className="btn-primary">
+                View work
+                <ArrowRight size={16} aria-hidden="true" />
+              </a>
+              <a href="#contact" className="btn-outline">
+                Get in touch
+              </a>
+              <a
+                href={personalInfo.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="GitHub (opens in a new tab)"
+                className="btn-outline px-3 sm:px-6"
+              >
+                <FaGithub size={18} aria-hidden="true" />
+                <span className="hidden sm:inline">GitHub</span>
+              </a>
+            </div>
+          </Reveal>
+        </div>
+
+        <Reveal delay={0.15} className="hidden lg:block">
+          <div className="card relative overflow-hidden p-6 sm:p-8">
+            <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-accent" />
+            <h2 className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.2em] text-muted">
+              <span>By the numbers</span>
+              <span className="text-ember">4+ yrs</span>
+            </h2>
+            <dl className="mt-7 grid grid-cols-2 gap-x-6 gap-y-8">
+              {headlineMetrics.map((m) => (
+                <Metric
+                  key={m.label}
+                  size="lg"
+                  label={m.label}
+                  value={
+                    m.countUp === false ? (
+                      formatMetric(m)
+                    ) : (
+                      <CountUp value={m.value} decimals={m.decimals} prefix={m.prefix} suffix={m.suffix} />
+                    )
+                  }
+                />
+              ))}
+            </dl>
+          </div>
+        </Reveal>
       </div>
     </section>
   );

@@ -1,138 +1,152 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
+import { navLinks, personalInfo } from '../data/portfolio';
+import { useActiveSection } from '../hooks/useActiveSection';
 
-const NAV_LINKS = [
-  { label: 'About', href: '#about' },
-  { label: 'Experience', href: '#experience' },
-  { label: 'Skills', href: '#skills' },
-  { label: 'Projects', href: '#projects' },
-  { label: 'Education', href: '#education' },
-  { label: 'Contact', href: '#contact' },
-];
+const SECTION_IDS = ['hero', ...navLinks.map((l) => l.id)] as const;
+const MOBILE_MENU_ID = 'mobile-menu';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [activeId, setActiveId] = useState('hero');
+  const activeId = useActiveSection(SECTION_IDS, 'hero');
+  const toggleRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Scroll-spy: highlight the nav link for the section currently in view.
   useEffect(() => {
-    const ids = ['hero', ...NAV_LINKS.map((l) => l.href.slice(1))];
-    const sections = ids
-      .map((id) => document.getElementById(id))
-      .filter((el): el is HTMLElement => el !== null);
+    if (!menuOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [menuOpen]);
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) setActiveId(entry.target.id);
-        });
-      },
-      { rootMargin: '-45% 0px -50% 0px', threshold: 0 }
-    );
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setMenuOpen(false);
+        toggleRef.current?.focus();
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [menuOpen]);
 
-    sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
-  }, []);
-
-  const handleNavClick = (href: string) => {
-    setMenuOpen(false);
-    const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
-  };
+  const solid = scrolled || menuOpen;
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-gray-950/95 backdrop-blur-md border-b border-gray-800/50 shadow-lg' : 'bg-transparent'
-      }`}
-    >
-      <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-        <a
-          href="#hero"
-          onClick={(e) => { e.preventDefault(); handleNavClick('#hero'); }}
-          className="font-bold text-lg tracking-tight transition-opacity hover:opacity-80"
-        >
-          <span className="gradient-text">Dharani</span>
-          <span className="text-white ml-1.5">Chinta</span>
-        </a>
-
-        {/* Desktop nav */}
-        <ul className="hidden md:flex items-center gap-8">
-          {NAV_LINKS.map((link) => {
-            const isActive = activeId === link.href.slice(1);
-            return (
-              <li key={link.href}>
-                <a
-                  href={link.href}
-                  aria-current={isActive ? 'page' : undefined}
-                  className={`nav-link relative ${isActive ? 'text-white' : ''}`}
-                  onClick={(e) => { e.preventDefault(); handleNavClick(link.href); }}
-                >
-                  {link.label}
-                  <span
-                    className={`absolute -bottom-1.5 left-0 h-0.5 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-300 ${
-                      isActive ? 'w-full' : 'w-0'
-                    }`}
-                  />
-                </a>
-              </li>
-            );
-          })}
-        </ul>
-
-        <a
-          href="mailto:dharani56525@gmail.com"
-          className="hidden md:inline-flex btn-primary text-sm px-4 py-2"
-        >
-          Hire Me
-        </a>
-
-        {/* Mobile menu toggle */}
-        <button
-          className="md:hidden text-gray-400 hover:text-white transition-colors"
-          onClick={() => setMenuOpen((o) => !o)}
-          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-          aria-expanded={menuOpen}
-        >
-          {menuOpen ? <X size={22} /> : <Menu size={22} />}
-        </button>
-      </div>
-
-      {/* Mobile menu */}
+    <>
       {menuOpen && (
-        <div className="md:hidden bg-gray-950/98 backdrop-blur-md border-t border-gray-800/50">
-          <ul className="flex flex-col px-6 py-4 gap-4">
-            {NAV_LINKS.map((link) => {
-              const isActive = activeId === link.href.slice(1);
+        <button
+          type="button"
+          aria-hidden="true"
+          tabIndex={-1}
+          onClick={() => setMenuOpen(false)}
+          className="fixed inset-0 z-40 cursor-default bg-ink-950/75 backdrop-blur-sm lg:hidden"
+        />
+      )}
+      <header
+        className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
+          solid ? 'border-b border-line/70 bg-ink-950/90 backdrop-blur-md' : 'border-b border-transparent'
+        }`}
+      >
+        <nav
+          aria-label="Primary"
+          className="mx-auto flex h-[var(--nav-height)] max-w-content items-center justify-between px-5 sm:px-8"
+        >
+          <a href="#hero" className="group flex items-center gap-2.5 rounded-lg">
+            <span
+              aria-hidden="true"
+              className="grid h-9 w-9 place-items-center rounded-xl bg-accent font-display text-sm font-bold text-ink-950 transition-transform group-hover:-rotate-6"
+            >
+              DC
+            </span>
+            <span className="whitespace-nowrap font-display text-lg font-semibold tracking-tight text-fg">
+              {personalInfo.name}
+            </span>
+          </a>
+
+          <ul className="hidden items-center gap-1 lg:flex">
+            {navLinks.map((link) => {
+              const isActive = activeId === link.id;
               return (
-                <li key={link.href}>
+                <li key={link.id}>
                   <a
-                    href={link.href}
-                    aria-current={isActive ? 'page' : undefined}
-                    className={`nav-link text-base ${isActive ? 'text-blue-400' : ''}`}
-                    onClick={(e) => { e.preventDefault(); handleNavClick(link.href); }}
+                    href={`#${link.id}`}
+                    aria-current={isActive ? 'location' : undefined}
+                    className={`relative block rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${
+                      isActive ? 'text-fg' : 'text-muted hover:text-fg'
+                    }`}
                   >
+                    {isActive && (
+                      <motion.span
+                        layoutId="nav-active"
+                        aria-hidden="true"
+                        className="absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full bg-accent"
+                        transition={{ type: 'spring', stiffness: 400, damping: 34 }}
+                      />
+                    )}
                     {link.label}
                   </a>
                 </li>
               );
             })}
-            <li>
-              <a href="mailto:dharani56525@gmail.com" className="btn-primary text-sm w-full justify-center">
-                Hire Me
+          </ul>
+
+          <a href="#contact" className="btn-primary hidden whitespace-nowrap px-5 py-2.5 lg:inline-flex">
+            Get in touch
+          </a>
+
+          <button
+            ref={toggleRef}
+            type="button"
+            className="grid h-11 w-11 place-items-center rounded-xl border border-line text-fg lg:hidden"
+            onClick={() => setMenuOpen((o) => !o)}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
+            aria-controls={MOBILE_MENU_ID}
+          >
+            {menuOpen ? <X size={20} aria-hidden="true" /> : <Menu size={20} aria-hidden="true" />}
+          </button>
+        </nav>
+
+        <div id={MOBILE_MENU_ID} hidden={!menuOpen} className="border-t border-line/70 bg-ink-950 lg:hidden">
+          <ul className="flex flex-col px-5 py-4">
+            {navLinks.map((link) => {
+              const isActive = activeId === link.id;
+              return (
+                <li key={link.id}>
+                  <a
+                    href={`#${link.id}`}
+                    aria-current={isActive ? 'location' : undefined}
+                    onClick={() => setMenuOpen(false)}
+                    className={`flex items-center justify-between rounded-xl px-3 py-3 font-display text-xl font-medium ${
+                      isActive ? 'bg-ink-850 text-fg' : 'text-body'
+                    }`}
+                  >
+                    {link.label}
+                    {isActive && <span aria-hidden="true" className="h-2 w-2 rounded-full bg-accent" />}
+                  </a>
+                </li>
+              );
+            })}
+            <li className="mt-3">
+              <a href="#contact" onClick={() => setMenuOpen(false)} className="btn-primary w-full">
+                Get in touch
               </a>
             </li>
           </ul>
         </div>
-      )}
-    </nav>
+      </header>
+    </>
   );
 }
