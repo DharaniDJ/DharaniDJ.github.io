@@ -1,111 +1,103 @@
-import { motion } from 'framer-motion';
-import { useInView } from 'framer-motion';
-import { useRef } from 'react';
-import { FaGithub, FaLinkedin } from 'react-icons/fa';
-import { SiLeetcode } from 'react-icons/si';
-import { Mail, ExternalLink, Send } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { ArrowUpRight, Check, Copy } from 'lucide-react';
 import { personalInfo } from '../data/portfolio';
+import { emailLink, profileLinks } from './socialLinks';
+import Reveal from './ui/Reveal';
+import Section from './ui/Section';
 
-const links = [
-  {
-    icon: Mail,
-    label: 'Email',
-    value: personalInfo.email,
-    href: `mailto:${personalInfo.email}`,
-    color: 'text-red-400',
-    bg: 'bg-red-500/10 hover:bg-red-500/20 border-red-500/20 hover:border-red-500/40',
-    external: false,
-  },
-  {
-    icon: FaGithub,
-    label: 'GitHub',
-    value: 'github.com/DharaniDJ',
-    href: personalInfo.github,
-    color: 'text-gray-300',
-    bg: 'bg-gray-700/30 hover:bg-gray-700/50 border-gray-700/50 hover:border-gray-500/50',
-    external: true,
-  },
-  {
-    icon: FaLinkedin,
-    label: 'LinkedIn',
-    value: 'linkedin.com/in/dharani-chinta',
-    href: personalInfo.linkedin,
-    color: 'text-blue-400',
-    bg: 'bg-blue-500/10 hover:bg-blue-500/20 border-blue-500/20 hover:border-blue-500/40',
-    external: true,
-  },
-  {
-    icon: SiLeetcode,
-    label: 'LeetCode',
-    value: 'leetcode.com/u/dharani56525',
-    href: personalInfo.leetcode,
-    color: 'text-yellow-400',
-    bg: 'bg-yellow-500/10 hover:bg-yellow-500/20 border-yellow-500/20 hover:border-yellow-500/40',
-    external: true,
-  },
-];
+type CopyState = 'idle' | 'copied' | 'failed';
+
+const RESET_MS: Record<Exclude<CopyState, 'idle'>, number> = { copied: 2500, failed: 4000 };
+
+const STATUS_TEXT: Record<CopyState, string> = {
+  idle: '',
+  copied: 'Email address copied to clipboard',
+  failed: `Couldn’t copy. The address is ${personalInfo.email}`,
+};
 
 export default function Contact() {
-  const ref = useRef<HTMLElement>(null);
-  const isInView = useInView(ref, { once: true, margin: '-100px' });
+  const [copyState, setCopyState] = useState<CopyState>('idle');
+  const emailRef = useRef<HTMLAnchorElement>(null);
+
+  useEffect(() => {
+    if (copyState === 'idle') return;
+    const timer = window.setTimeout(() => setCopyState('idle'), RESET_MS[copyState]);
+    return () => window.clearTimeout(timer);
+  }, [copyState]);
+
+  const copyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(personalInfo.email);
+      setCopyState('copied');
+    } catch {
+      if (emailRef.current) window.getSelection()?.selectAllChildren(emailRef.current);
+      setCopyState('failed');
+    }
+  };
 
   return (
-    <section id="contact" ref={ref} className="py-24 bg-gray-900/30">
-      <div className="max-w-4xl mx-auto px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <p className="text-blue-400 font-mono text-sm font-medium mb-2 tracking-widest uppercase">Let's connect</p>
-          <h2 className="section-heading">Get In Touch</h2>
-          <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 mx-auto mt-4 rounded-full" />
-          <p className="text-gray-400 mt-6 text-base max-w-xl mx-auto">
-            I'm currently open to new opportunities anywhere in the United States. Whether you have a role in mind,
-            a project to discuss, or just want to say hi — my inbox is always open!
-          </p>
-        </motion.div>
-
-        {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={isInView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-center mb-12"
-        >
-          <a
-            href={`mailto:${personalInfo.email}`}
-            className="btn-primary text-base px-8 py-4"
-          >
-            <Send size={18} />
-            Say Hello
-          </a>
-        </motion.div>
-
-        {/* Links grid */}
-        <div className="grid sm:grid-cols-2 gap-4">
-          {links.map(({ icon: Icon, label, value, href, color, bg, external }, i) => (
-            <motion.a
-              key={label}
-              href={href}
-              target={external ? '_blank' : undefined}
-              rel={external ? 'noopener noreferrer' : undefined}
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.4, delay: 0.3 + i * 0.1 }}
-              className={`flex items-center gap-4 p-4 rounded-xl border transition-all duration-200 ${bg}`}
-            >
-              <Icon size={22} className={color} />
+    <Section id="contact" eyebrow="Contact" title="Let’s talk about your next system.">
+      <Reveal>
+        <div className="rounded-3xl bg-accent p-px">
+          <div className="relative overflow-hidden rounded-[calc(1.5rem-1px)] bg-ink-900 px-5 py-9 sm:px-12 sm:py-14">
+            <div
+              aria-hidden="true"
+              className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-rose/15 blur-[100px]"
+            />
+            <div className="relative grid grid-cols-1 gap-10 lg:grid-cols-[1.3fr_1fr] lg:items-end">
               <div className="min-w-0">
-                <p className="text-gray-500 text-xs">{label}</p>
-                <p className="text-gray-300 text-sm font-medium truncate">{value}</p>
+                <p className="text-base leading-relaxed text-body sm:text-lg">
+                  I’m open to opportunities across the U.S. If you have a role in mind, or a system that needs to be
+                  faster or more trustworthy, my inbox is open.
+                </p>
+                <a
+                  ref={emailRef}
+                  href={emailLink.href}
+                  className="mt-6 block break-all font-display text-[clamp(1.375rem,4vw,2.5rem)] font-semibold leading-tight tracking-tight text-fg underline decoration-ember/60 decoration-2 underline-offset-8 transition-colors hover:text-ember"
+                >
+                  {personalInfo.email}
+                </a>
+                <button type="button" onClick={copyEmail} className="btn-outline mt-8">
+                  {copyState === 'copied' ? (
+                    <Check size={16} aria-hidden="true" />
+                  ) : (
+                    <Copy size={16} aria-hidden="true" />
+                  )}
+                  {copyState === 'copied' ? 'Copied' : 'Copy email'}
+                </button>
+                <p role="status" className={copyState === 'failed' ? 'mt-3 break-all text-sm text-body' : 'sr-only'}>
+                  {STATUS_TEXT[copyState]}
+                </p>
               </div>
-              <ExternalLink size={14} className="text-gray-600 ml-auto flex-shrink-0" />
-            </motion.a>
-          ))}
+
+              <ul className="grid min-w-0 grid-cols-1 gap-3">
+                {profileLinks.map(({ label, display, href, icon: Icon }) => (
+                  <li key={label} className="min-w-0">
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group flex items-center gap-4 rounded-2xl border border-line bg-ink-850 px-4 py-4 transition hover:-translate-y-0.5 hover:border-line-strong sm:px-5"
+                    >
+                      <Icon size={20} aria-hidden={true} className="flex-none text-ember" />
+                      <span className="min-w-0">
+                        <span className="block text-sm font-semibold text-fg">{label}</span>
+                        <span className="block truncate font-mono text-xs text-muted">{display}</span>
+                      </span>
+                      <ArrowUpRight
+                        size={16}
+                        aria-hidden="true"
+                        className="ml-auto flex-none text-muted transition-colors group-hover:text-ember"
+                      />
+                      <span className="sr-only">(opens in a new tab)</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
-      </div>
-    </section>
+      </Reveal>
+    </Section>
   );
 }

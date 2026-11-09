@@ -1,28 +1,29 @@
-import { FaGithub, FaLinkedin } from 'react-icons/fa';
-import { Mail } from 'lucide-react';
 import { personalInfo } from '../data/portfolio';
+import { allLinks } from './socialLinks';
 
 export default function Footer() {
   return (
-    <footer className="py-8 border-t border-gray-800 bg-gray-950">
-      <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-        <p className="text-gray-600 text-sm">
-          © {new Date().getFullYear()} <span className="text-gray-400">Dharani Chinta</span>. Built with React & Tailwind CSS.
+    <footer className="border-t border-line bg-ink-950">
+      <div className="mx-auto flex max-w-content flex-col items-center justify-between gap-4 px-5 py-8 sm:flex-row sm:px-8">
+        <p className="text-sm text-muted">
+          © {new Date().getFullYear()} <span className="text-fg">{personalInfo.name}</span> · Built with React,
+          TypeScript & Tailwind CSS
         </p>
-        <div className="flex items-center gap-4">
-          <a href={personalInfo.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub"
-            className="text-gray-600 hover:text-white transition-colors">
-            <FaGithub size={18} />
-          </a>
-          <a href={personalInfo.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"
-            className="text-gray-600 hover:text-white transition-colors">
-            <FaLinkedin size={18} />
-          </a>
-          <a href={`mailto:${personalInfo.email}`} aria-label="Email"
-            className="text-gray-600 hover:text-white transition-colors">
-            <Mail size={18} />
-          </a>
-        </div>
+        <ul className="flex items-center gap-2">
+          {allLinks.map(({ label, href, icon: Icon, external }) => (
+            <li key={label}>
+              <a
+                href={href}
+                aria-label={external ? `${label} (opens in a new tab)` : label}
+                target={external ? '_blank' : undefined}
+                rel={external ? 'noopener noreferrer' : undefined}
+                className="grid h-10 w-10 place-items-center rounded-full text-muted transition-colors hover:bg-ink-850 hover:text-ember"
+              >
+                <Icon size={18} aria-hidden={true} />
+              </a>
+            </li>
+          ))}
+        </ul>
       </div>
     </footer>
   );

@@ -1,104 +1,55 @@
-import { motion } from 'framer-motion';
-import { useInView } from 'framer-motion';
-import { useRef } from 'react';
-import { MapPin, GraduationCap, Briefcase, Zap, TrendingDown } from 'lucide-react';
-import { personalInfo } from '../data/portfolio';
+import { Fragment } from 'react';
+import { facts, glossary, personalInfo } from '../data/portfolio';
+import Reveal from './ui/Reveal';
+import Section from './ui/Section';
 
-const stats = [
-  { value: '4+', label: 'Years Experience', icon: Briefcase },
-  { value: '500+', label: 'Users Served', icon: Zap },
-  { value: '4.0', label: 'MS GPA at ASU', icon: GraduationCap },
-  { value: '63%', label: 'Cloud Cost Reduction', icon: TrendingDown },
-];
+const ABBR_PATTERN = new RegExp(`\\b(${Object.keys(glossary).join('|')})\\b`, 'g');
 
-// Recruiter-facing signals — the things that stand out at a glance.
-const highlights = [
-  { icon: '💼', label: 'SDE @ Amazon' },
-  { icon: '🤖', label: 'GenAI · LLM · RAG' },
-  { icon: '🏆', label: 'AWS Certified GenAI Developer – Professional' },
-  { icon: '🎓', label: 'MS Software Engineering · 4.0 GPA' },
-];
+function WithAbbreviations({ text }: { text: string }) {
+  return (
+    <>
+      {text.split(ABBR_PATTERN).map((part, i) =>
+        part in glossary ? (
+          <abbr key={i} title={glossary[part]} className="cursor-help no-underline">
+            {part}
+          </abbr>
+        ) : (
+          <Fragment key={i}>{part}</Fragment>
+        ),
+      )}
+    </>
+  );
+}
 
 export default function About() {
-  const ref = useRef<HTMLElement>(null);
-  const isInView = useInView(ref, { once: true, margin: '-100px' });
+  const [lead, ...rest] = personalInfo.summary;
 
   return (
-    <section id="about" ref={ref} className="py-24 bg-gray-950">
-      <div className="max-w-6xl mx-auto px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <p className="text-blue-400 font-mono text-sm font-medium mb-2 tracking-widest uppercase">Get to know me</p>
-          <h2 className="section-heading">About Me</h2>
-          <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 mx-auto mt-4 rounded-full" />
-        </motion.div>
-
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
-          {/* Text */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="space-y-5 text-gray-400 leading-relaxed"
-          >
-            <p>
-              {personalInfo.summary}
+    <Section id="about" eyebrow="About" title="Config-driven forms, gated releases, events that don’t get lost.">
+      <div className="grid gap-10 lg:grid-cols-[1.5fr_1fr] lg:gap-16">
+        <Reveal className="space-y-5">
+          <p className="font-display text-xl leading-snug text-fg sm:text-2xl">{lead}</p>
+          {rest.map((p) => (
+            <p key={p} className="text-base leading-relaxed text-body sm:text-lg">
+              <WithAbbreviations text={p} />
             </p>
-            <p>
-              I thrive at the intersection of backend engineering and AI — from designing event-driven microservices
-              and RAG pipelines to shipping frontends with real-time streaming UX. I love tackling complex
-              problems and delivering clean, production-ready solutions.
-            </p>
+          ))}
+        </Reveal>
 
-            {/* Eye-catching highlights for recruiters */}
-            <div className="flex flex-wrap gap-2 pt-1">
-              {highlights.map(({ icon, label }) => (
-                <span
-                  key={label}
-                  className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full bg-blue-500/10 text-blue-300 border border-blue-500/20"
-                >
-                  <span>{icon}</span>
-                  {label}
-                </span>
-              ))}
-            </div>
-
-            <div className="flex items-center gap-2 text-gray-500 text-sm pt-2">
-              <MapPin size={14} className="text-blue-400" />
-              <span>Bellevue, WA · Open to opportunities anywhere in the United States</span>
-            </div>
-          </motion.div>
-
-          {/* Stats grid */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="grid grid-cols-2 gap-4"
-          >
-            {stats.map(({ value, label, icon: Icon }, i) => (
-              <motion.div
-                key={label}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={isInView ? { opacity: 1, scale: 1 } : {}}
-                transition={{ duration: 0.4, delay: 0.4 + i * 0.1 }}
-                whileHover={{ y: -4 }}
-                className="card text-center group"
-              >
-                <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-blue-500/20 transition-colors">
-                  <Icon size={20} className="text-blue-400" />
-                </div>
-                <div className="text-3xl font-bold text-white mb-1">{value}</div>
-                <div className="text-gray-500 text-sm">{label}</div>
-              </motion.div>
+        <Reveal delay={0.1}>
+          <dl className="card divide-y divide-line">
+            {facts.map((fact) => (
+              <div key={fact.label} className="grid grid-cols-[7rem_1fr] gap-4 px-6 py-4">
+                <dt className="font-mono text-xs uppercase tracking-[0.15em] text-muted">{fact.label}</dt>
+                <dd className="text-sm font-medium text-fg">{fact.value}</dd>
+              </div>
             ))}
-          </motion.div>
-        </div>
+          </dl>
+          <p className="mt-4 text-sm text-muted">
+            Full name: <span className="text-body">{personalInfo.fullName}</span>
+          </p>
+        </Reveal>
       </div>
-    </section>
+    </Section>
   );
 }

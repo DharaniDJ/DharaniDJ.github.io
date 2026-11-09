@@ -1,11 +1,51 @@
+export interface PersonalInfo {
+  name: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  title: string;
+  currentRole: string;
+  currentRoleShort: string;
+  currentCompany: string;
+  valueLine: string;
+  tagline: string;
+  status: string;
+  email: string;
+  location: string;
+  github: string;
+  linkedin: string;
+  leetcode: string;
+  summary: string[];
+}
+
+export interface HeadlineMetric {
+  value: number;
+  decimals?: number;
+  prefix?: string;
+  suffix?: string;
+  label: string;
+  shortLabel: string;
+  countUp?: boolean;
+}
+
+export interface Fact {
+  label: string;
+  value: string;
+}
+
+export interface Highlight {
+  lead?: string;
+  text: string;
+}
+
 export interface Experience {
+  id: string;
   company: string;
+  shortName: string;
   role: string;
   period: string;
   location: string;
-  highlights: string[];
-  color: string;
-  initials: string;
+  highlights: Highlight[];
 }
 
 export interface Education {
@@ -16,23 +56,33 @@ export interface Education {
   gpa: string;
 }
 
-export interface Skill {
+export interface SkillGroup {
   category: string;
-  icon: string;
   items: string[];
+}
+
+export interface ProjectMetric {
+  value: string;
+  label: string;
 }
 
 export interface Project {
   title: string;
-  description: string;
+  context?: string;
+  problem: string;
+  metrics: ProjectMetric[];
   tech: string[];
-  github?: string;
-  demo?: string;
-  highlights?: string[];
+  featured?: true;
+  detail?: string;
+  myPart?: string;
 }
 
 export interface Certification {
   name: string;
   issuer: string;
-  icon: string;
+}
+
+export interface NavLink {
+  id: string;
+  label: string;
 }

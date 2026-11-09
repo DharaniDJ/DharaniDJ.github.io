@@ -1,23 +1,38 @@
 /** @type {import('tailwindcss').Config} */
+const token = (name) => `rgb(var(--${name}) / <alpha-value>)`;
+
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
-  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        primary: {
-          50: '#eff6ff',
-          100: '#dbeafe',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-          900: '#1e3a8a',
+        ink: {
+          950: token('ink-950'),
+          900: token('ink-900'),
+          850: token('ink-850'),
+          800: token('ink-800'),
         },
-        accent: '#6366f1',
+        line: {
+          DEFAULT: token('line'),
+          strong: token('line-strong'),
+        },
+        fg: token('fg'),
+        body: token('body'),
+        muted: token('muted'),
+        ember: token('ember'),
+        rose: token('rose'),
+        mint: token('mint'),
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
+        display: ['"Bricolage Grotesque Variable"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['"Inter Variable"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono Variable"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+      },
+      backgroundImage: {
+        accent: 'linear-gradient(120deg, rgb(var(--ember)), rgb(var(--rose)))',
+      },
+      maxWidth: {
+        content: '72rem',
       },
     },
   },

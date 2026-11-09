@@ -1,21 +1,25 @@
-import Navbar from './components/Navbar';
-import ScrollProgress from './components/ScrollProgress';
-import Hero from './components/Hero';
+import { MotionConfig } from 'framer-motion';
 import About from './components/About';
-import Experience from './components/Experience';
-import Skills from './components/Skills';
-import Projects from './components/Projects';
-import Education from './components/Education';
-import Contact from './components/Contact';
-import Footer from './components/Footer';
 import BackToTop from './components/BackToTop';
+import Contact from './components/Contact';
+import Education from './components/Education';
+import Experience from './components/Experience';
+import Footer from './components/Footer';
+import Hero from './components/Hero';
+import Navbar from './components/Navbar';
+import Projects from './components/Projects';
+import ScrollProgress from './components/ScrollProgress';
+import Skills from './components/Skills';
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-gray-950">
+    <MotionConfig reducedMotion="user">
+      <a href="#main" className="skip-link">
+        Skip to content
+      </a>
       <ScrollProgress />
       <Navbar />
-      <main>
+      <main id="main" tabIndex={-1} className="outline-none">
         <Hero />
         <About />
         <Experience />
@@ -26,6 +30,6 @@ export default function App() {
       </main>
       <Footer />
       <BackToTop />
-    </div>
+    </MotionConfig>
   );
 }
